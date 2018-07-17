@@ -1,29 +1,29 @@
-## SSH Login to your EC2 instance
+## SSH登录到您的EC2实例
 
-### 1) Find your EC2 instance's Public IP
-In AWS Click on EC2
+### 1) 找到您的EC2实例的公网IP
+在AWS中单击EC2
 
-Go to the Running Instances
+转到正在运行的实例
 
-Find  and select your EC2 instance
+找到并选择您的EC2实例
 
-Copy your EC2 instance's IPv4 Public IP
+复制EC2实例的IPv4公网IP地址
 
-### 2) Change your .pem key's mode to 'read-only'
-Open your terminal
+### 2) 将.pem秘钥文件的属性更改为“只读”
+打开你的终端
 
-Go to your downloaded .pem key file and change the file’s mode to read-only
+转到下载的.pem密钥文件的目录，将文件属性更改为只读
 
-Run command in bash (assuming you’ve saved it in downloads):
+在命令行中运行命令（假设您已将其保存在Downloads目录中）:
 
 `$chmod 400 ~/Downloads/keyname.pem`
 
-Example
+例如
 $chmod 400 ~/Downloads/leorentanyag.pem 
  
-### 3) SSH into your instance using your pem key
+### 3) 使用你的pem秘钥通过SSH登录你的实例
 
-`ssh -i ~/Downloads/<keyname.pem> ec2-user@<IPv4 Public IP adres>`
+`ssh -i ~/Downloads/<keyname.pem> ec2-user@<公网IPv4地址>`
 
-Example:
+例如:
 ssh -i ~/Downloads/leorentanyag.pem ec2-user@13.55.214.58

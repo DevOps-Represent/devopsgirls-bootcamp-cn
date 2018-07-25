@@ -118,7 +118,6 @@ Database Prefix: firstname_
 
 ![Image][2-1-11-wpsql]
 
-Make sure you replace 'firstname_' with your first name. For example, 'Banana Smith' would have the database prefix of 'banana'.
 记得将'firstname_'替换为你的名字。例如：'Banana Smith'的数据库前缀为'banana'。
 
 ### 14.) 安装完成
@@ -158,8 +157,7 @@ aws s3 cp ~/firstname.lastname-wordpress.tgz s3://devopsgirls-training-2/firstna
 
 ### 17.) 使用Web控制台确认文件存在
 
-Go to *Services > S3*. Click on the bucket called *devopsgirls-training*. If you uploaded your file correctly, then it should be there!
-打开 *服务 > S3*。 点击存储桶名称 *devopsgirls-training*。 如果您正确上传了文件，那么文件应该在这里！
+打开 *服务 > S3*。 点击名称为 *devopsgirls-training* 的存储桶。 如果您正确上传了文件，那么文件应该在这里！
 
 ![Image][2-1-12-s3]
 
@@ -175,7 +173,6 @@ Go to *Services > S3*. Click on the bucket called *devopsgirls-training*. If you
 
 ### 19.) 设置实例细节
 
-On Step 1, choose the *Amazon Linux AMI*. On the Instance Type, select *t2.micro*.
 在步骤1中，选择 *Amazon 系统映像*。选择 *t2.micro* 的实例类型。
 
 ![Image][2-1-14-ami]
@@ -231,7 +228,6 @@ service httpd start
 
 ### 23.) 启动实例并转到负载均衡器
 
-Click on *Launch instance* to launch your instance. Now, go back to the Load Balancer section ( *Services > EC2 > Load Balancers* ). Select the Load Balancer you created prior, then click on *Instances* on the lower pane.
 点击 *启动实例* 来启动你的实例。现在，返回负载均衡器的部分（ *服务 > EC2 > 负载均衡器* ）。 选择之前创建的负载均衡器，然后单击下方面板中的 *实例*。
 
 ![Image][2-1-18-instances]

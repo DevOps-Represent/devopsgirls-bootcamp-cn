@@ -1,15 +1,15 @@
-## AWS Account SignUp - (10 min)
+## AWS账户注册 - (10 分钟)
 
-To participate in the advanced CLI module, you will require your own Personal AWS Account.
+要使用高级CLI模块，您将需要自己的个人AWS账户
 
-Requirements for signing up:
+注册要求:
 
  * Email
- * Postal Address
- * Credit Card
- * Telephone Phone # for Verification
+ * 地址
+ * 信用卡
+ * 手机号 # 用于验证
 
-SignUp here:
+在如下地址注册:
 
 https://aws.amazon.com/
 
@@ -17,18 +17,17 @@ https://aws.amazon.com/
 
 
 
-Signing up is decently straight forward, please note that you cannot proceed without meeting all the requirements.
+注册是非常直接的，请注意，如果不满足所有要求，你将无法继续.
 
 
 
 ![SignUp](/images/SIGNUP/signup_creds.png)
 
 
-#### Presentor Notes:
+#### 注册经验:
 
-*Can we provide credit?
-
-* One has to select a support plan. You will need to select basic support plan to avoid any costs.
-* In AWS there is a free Tier of products that can be used with a personal account.
-* Once registration completed and you have signed up, there will be a large number of services available to you.
-* At the end of the boot camp, terminate any resource used / consumed. One needs to be responsible for resources used.
+* 必须要有信用卡?
+* 你需要选择一个support plan。为了减少成本，你可以选择basic support。
+* 在AWS中，有一个免费的产品试用方案可用于个人帐户。
+* 注册完成并且您已登录后，将有大量服务可供您使用。
+* 在新手训练营结束时，请保证已经删除删除/终止任何使用过的资源。每个人需要对使用的资源负责。

@@ -1,24 +1,24 @@
-We need coaches to hover around and help our participants with any questions or other issues they might have as they go through the course content. There are a few roles our coaches can take on throughout the day:
+我们需要教练在整个课堂上不断的穿梭并帮助我们的参与者解决他们在阅读课程内容时可能遇到的问题。我们的教练需要扮演一些角色：
 
-# Coaching roles
+# 教练的角色
 
-## Slack channel monitors
+## 频道监听者
 
-Some people will feel comfortable asking questions in our Slack channel, so we need a few people ready to answer them.
+有些人会在我们的Slack频道中提问，所以我们需要一些人来回答它们。
 
-## Table helpers
+## 固定教练
 
-Other participants might be more comfortable with in-person assistance, so we have a coach sitting at each table, ready to help.
+有些参与者可能更需要面对面的帮助，所以我们需要每张桌子有一个教练，以便随时提供帮助。
 
-## Roamers
+## 流动教练
 
-A couple of people can wander the room, providing ad-hoc assistance where other helpers are already occupied. Look out for people with furrowed brows or other confused looks on their faces, and ask them if they need a hand.
+有几个人可以在房间里闲逛，在其他帮助者已经被占用的情况下提供临时协助。留意脸上有皱眉或其他困惑的人，并询问他们是否需要帮助。
 
-## Latecomer helpers
+## 后来者助手
 
-Latecomers might need a bit more help coming up to speed, so it’d help them to have a dedicated helper (perhaps not for the whole session, but at least while they get going).
+后来者可能需要更多的帮助才能跟上课程的脚步，所以一个教练专程负责后来者的帮助将有助于能跟上大部队的脚步（可能不是整个课程，但至少在他们开始时）。
 
-# What we expect of our coaches:
+# 我们对教练的期望是什么：
 
-- You’ve run through the course content beforehand, so you’re familiar with what people will be doing, and can explain what’s going on. While that might sound a bit scary, don’t panic! You don’t need to know everything, just enough to be able to point people in the right direction - you can always ask other coaches for help if you’re not sure about a particular question somebody has.
-- You’ll socialise with the participants during the event - we want them to feel welcome! If you see people standing alone during the breaks, have a chat to them and see how they’re going.
+- 你事先已经完成了课程内容，因此你熟悉人们将要做的事情，并可以解释正在发生的事情。虽然这可能听起来有点吓人，但不要惊慌！你不需要知道所有事情，只需足以为人们指出正确的方向 - 如果你不确定某个人有什么特定的问题，你可以随时向其他教练寻求帮助。
+- 你将在活动期间与参与者交流 - 我们希望他们感到受欢迎！如果你看到人们在休息时独自站立，可以和他们聊聊，看看他们是怎么回事。

@@ -1,125 +1,114 @@
-# Load Balancing and High Availability.
+# 负载均衡和高可用性
 
-## Key Concepts
+## 关键概念
 
-Before we get started, here's a couple of loose concepts:
+在我们开始之前，先看几个概念：
 
- - Load Balancers forward your traffic to one or more service providers. What this essentially means is that you can have multiple EC2 instances serving the same kind of content, being represented as one service.
+  - 负载均衡器将流量转发给一个或多个服务提供商。这意味着你可以将多个提供相同内容的EC2实例作为一个服务。
 
- - High Availability means making it so that your system remains operational for a desirably long length of time. This means making it more durable to system failures - having failovers, in this case.
+  - 高可用性意味着你的系统可以在一段时间内保持正常地运行。当系统发生故障时，采用故障转移会使你的系统更加耐用。
 
- - Service Separation refers to making sure that if you have multiple systems dependent on each other, that they exist separately and share fewer failure modes.
+  - 如果你有多个系统相互依赖，服务分离可以确保它们服务间分离且故障分离。
 
- - Artifacts are tangible byproducts of our systems development. In this case, our artifact will be the modified Wordpress package that's special to only you.
+  - Artifacts是我们系统产出的副产品。在这个例子中，Artifacts是修改后的Wordpress包，它对你来说是独一无二的。
 
-Now that that's out of the way, let's get started!
+让我们开始吧！
 
-## What we're going to do
+## 我们要做什么
 
-In this practical session, we will:
+在本次实践课中，我们将要做的有：
 
- - Create an Elastic Load Balancer
- - Reinstall Wordpress, but using an external database
- - Create an Artifact of your modified Wordpress, then upload it to S3
- - Create another instance, using the artifact as a base
+  - 创建一个具备伸缩性的负载均衡器
+  - 使用外部的数据库重新安装Wordpress
+  - 创建一个你修改后的Wordpress的Artifact，将它上传到S3上
+  - 使用该Artifact创建另一个实例
 
+## 创建一个具有伸缩性的负载均衡器
 
-## Creating an Elastic Load Balancer
+### 1.）创建负载均衡器
 
-### 1.) Create your load balancer
-
-Go to Services > EC2, then look for "Load Balancers". Click on "Create Load Balancer"
+点击 *服务 > 选择EC2 > 负载均衡器*。 点击“创建负载均衡器”。
 
 ![Image][2-1-1-create]
 
+### 2.）选择负载均衡器类型
 
-### 2.) Select the type of load balancer
-
-In the next page, make sure you select *Classic Load Balancer*.
+在选择负载均衡器类型的页面，你需要选择`Classic负载均衡器`。
 
 ![Image][2-1-2-classic]
 
+### 3.) 定义负载均衡器
 
-### 3.) Name your ELB
-
-Put *myname*-elb under *Load Balancer Name*. Under *Create ELB Inside*, select *My Default VPC*.
+在 `负载均衡器名称` 处写下你的负载均衡器的名字，格式：*myname*-elb。*创建内部 LB* 项选择 *My Default VPC*。
 
 ![Image][2-1-3-lbname]
 
+### 4.) 设置负载均衡器使用的协议
 
-### 4.) Set your load balancing protocol
-
-We'll leave the listener configuration intact for the time being - but do click on "Load Balancer Protocol". You should see a couple of options - load balancers are powerful!
+`Listener`保持不变，但你可以点击`负载均衡器协议`，你会看到强大的负载均衡器所有支持的协议选项。
 
 ![Image][2-1-4-listeners]
 
+### 5.) 为负载均衡器创建安全组
 
-### 5.) Create security groups for your ELB
-
-On the next page, choose the option "Create a new Security Group". Take note that it's similar to the security groups you made for your instance earlier - similar to a "firewall" where you can say what kind of traffic is allowed.
+点击`下一页`，选择`创建一个新安全组`选项。与之前为实例创建的安全组类似，相当于设置允许哪种类型的流量通过的防火墙。
 
 ![Image][2-1-5-secgroups]
 
-We'll leave things default for now, except for "Source" - for which we'll choose "My IP".
+除了"来源"选择"我的IP"，其他的配置都保持默认值。
 
-### 6.) Skip the next page, as we have no SSL settings.
+### 6.) 跳过下一配置页，因为我们不需要SSL配置
 
-### 7.) Configure your health checks
+### 7.) 配置运行状况检查
 
-On the next page, we'll be configuring our *health checks*. Health checks essentially verify if the instance is "healthy" - if it's accepting traffic, or it's not receiving errors. Have a look at the tooltips for each of the options.
+健康检查会根据它正在接受流量或者它没有收到错误，来验证实例是否“健康”。 你可以查看每个选项的提示信息。
 
 ![Image][2-1-6-healthchecks]
 
+现在，我们选择`TCP`协议，`80`端口。换句话说，负载均衡器会检查所有实例的80端口，如果它没有响应错误就会被标记为"健康"。
 
-For now, we'll choose *TCP* as the Ping Protocol, using *80* as the Ping Port. What this is saying, is that the Load Balancer will check port 80 of any attached instances, and mark it as "healthy" if it responds without errors.
+### 8.) 关联实际提供服务的实例
 
-
-
-### 8.) Set the instances to forward to
-
-On the instances page, we'll select the instance that you created in the previous module. This essentially means that we'll be forwarding any traffic that hits the load balancer to your instance.
+在实例页面上，我们将选择你在上一个模块中创建的实例。 这实质上意味着我们会将任何到达负载均衡器的流量转发给你选择的实例。
 
 ![Image][2-1-7-instances]
 
+### 9.) 添加标签
 
-### 9.) Add tags
-
-As usual, tags. We'll put a Key of *Name* and a Value of *myname*-elb.
+对于标签来说，我们通常会设置键 为 *Name*，值
+为 *myname*-elb。
 
 ![Image][2-1-8-tags]
 
+### 10.) 最后一步!
 
-### 10.) Finish up!
-
-Review all the settings you've had, then click *Create*
+检查你的配置无误后，点击 *创建* 按钮。
 
 ![Image][2-1-9-review]
 
 
-### 11.) See your ELB details
+### 11.) 查看负载均衡器的详细信息
 
-Click on the link that goes to your ELB. As with the instance, you'll see a pane that details the properties of your ELB. Make note of the *DNS Name*, marked below.
+点击跳转到负载均衡器的链接。与实例一样，您将看到一个详细介绍负载均衡器属性的面板。 记下 *DNS名称* ，标记如下。
 
 ![Image][2-1-10-details]
 
+## 使用RDS重新安装WordPress
 
+因为Wordpress将其URL数据保存在数据库中，所以我们需要重置你的Wordpress。 如果你的SSH会话仍处于打开状态，那么你可以继续使用，否则，请转到此处的SSH说明。
 
-## Reinstall Wordpress using RDS
+### 12.) 重置WordPress配置
 
-Because Wordpress keeps its URL data in the database, we'll need to reset your Wordpress installation. If your SSH session is still open then you're good to go - otherwise, go to the SSH instructions here.
-
-### 12.) Reset Wordpress Config
-
-Using your Terminal or Putty, go to the Wordpress directory, then remove the wp-config.php file:
+使用`Terminal`或者`Putty`，跳转到Workpress目录，然后删掉`wp-config.php`文件：
 
 ```
 cd /var/www/html/
 sudo rm wp-config.php
 ```
 
-### 13.) Reconfigure Wordpress database
+### 13.) 重置WorkPress数据库
 
-Now, open your browser and paste the *DNS Name* that you had in Step 11. This should show you an installation page. Proceed with the installation, but when you get to the panel that asks you for your database details, put in the following:
+现在，打开浏览器并粘贴步骤11中的 *DNS名称* 。这应该显示一个安装页面。继续安装，但是当你访问到需要提供数据库详细信息的页面时，请输入以下内容：
 
 ```
 Database Name: devopsgirlsdb
@@ -129,77 +118,74 @@ Database Host: rds.devopsgirls.internal
 Database Prefix: firstname_
 ```
 
-It should look like this:
+参考下图：
 
 ![Image][2-1-11-wpsql]
 
+记得将'firstname_'替换为你的名字。例如：'Banana Smith'的数据库前缀为'banana'。
 
-Make sure you replace 'firstname_' with your first name. For example, 'Banana Smith' would have the database prefix of 'banana'.
+### 14.) 安装完成
 
-### 14.) Finish the installation
+安装完成，直到转到你Blog Post页面。
+现在事情已经准备就绪，我们可以开始推广WordPress制品了。
 
-Finish the install, until it forwards you to the Blog Post page. Now that things are ready, we can start rolling our Wordpress artifact.
+## 创建制品
 
-## Creating the artifact
+### 15.) 复制你的WordPress目录
 
-### 15.) Create a copy of your Wordpress directory
-
-If the installation went well, then you're going to want to create a copy of your installed Wordpress directory, so you won't have to run the install again. We do this via the Terminal or Putty application. We're going to use the following commands:
+如果安装顺利，你可以复制已安装的Wordpress目录，这样做你就不必再次运行安装命令。我们通过`Terminal`或`Putty`执行此操作。 我们将使用以下命令：
 
 ```
 cd /var/www/html/
 sudo tar cvfz ~/firstname.lastname-wordpress.tgz .
 ```
 
-With this command, changing directories to */var/www/html* - where Wordpress is installed. Then, we create a compressed tar file - firstname.lastname-wordpress.tgz - containing the contents of our current directory (.)
+使用此命令，将现在的目录改为安装了WordPress的目录*/var/www/html*。 然后，我们创建一个压缩的tar文件 `firstname.lastname-wordpress.tgz`，它包含了当前目录的内容（.）
 
-### 16.) Upload the file to S3
+### 16.) 将文件上传到S3
 
-S3 is an object store - essentially allowing you to upload files to a directory that you can share either within the account, or to the world. We do this by running the following commands - one to set the maximum size of the upload, and one to *copy* the file to S3 ( *s3 cp* ).
-
+S3是一个对象存储，它允许你将文件上传到帐户内共享或全世界共享的目录。
+我们通过运行以下命令来执行此操作，一个用于设置上载文件的上限大小，另一个用于*将文件复制到S3 ( *s3 cp* )。
 
 ```
 aws configure set default.s3.multipart_threshold 64MB
 aws s3 cp ~/firstname.lastname-wordpress.tgz s3://devopsgirls-training/firstname.lastname-wordpress.tgz --no-sign-request
 ```
 
-Depending on the AWS login that you used ( `devopsgirls`, `devopsgirls-2`, or `devopsgirls-3`, you may need to change the S3 bucket to upload to. `devopsgirls` accounts need to use `devopsgirls-training`, `devopsgirls-2` accounts need to use `devopsgirls-training-2`, and `devopsgirls-3` accounts need to use `devopsgirls-training-3`. For example, for a `devopsgirls-2` account:
+您可能需要根据你使用的AWS登录名 `devopsgirls`，`devopsgirls-2` 或 `devopsgirls-3` 更改上传的S3存储桶。`devopsgirls`帐户需要使用`devopsgirls-training`，`devopsgirls-2` 帐户需要使用 `devopsgirls-training-2`，`devopsgirls-3` 帐户需要使用`devopsgirls-training-3`。例如，对`devopsgirls-2`帐户来说：
 
 ```
 aws configure set default.s3.multipart_threshold 64MB
 aws s3 cp ~/firstname.lastname-wordpress.tgz s3://devopsgirls-training-2/firstname.lastname-wordpress.tgz --no-sign-request
 ```
 
-### 17.) Confirm the file exists using the web console:
+### 17.) 使用Web控制台确认文件存在
 
-Go to *Services > S3*. Click on the bucket called *devopsgirls-training*. If you uploaded your file correctly, then it should be there!
+打开 *服务 > S3*。 点击名称为 *devopsgirls-training* 的存储桶。 如果您正确上传了文件，那么文件应该在这里！
 
 ![Image][2-1-12-s3]
 
+## 创建第二个实例
 
-## Create a second instance
+我们现在有一个负载均衡器和一个制品。 我们可以用它们让你拥有多个实例，这样做的好处是：如果其中一个实例停止，你的服务仍然可以运行。
 
-So: now we have a Load Balancer, and an Artifact. What we can do now is make it so that you have multiple instances, so that your service can still be up if one of the instances is down.
+### 18.) 创建第二个实例
 
-### 18.) Create a second instance
-
-Go to *Services > EC2* in the web console. As with the first module, we're creating another instance. Click on Launch Instance.
+在Web控制台中，打开 *服务 > EC2*。 与第一个模块一样，我们正在创建另一个实例。 点击 *启动实例*。
 
 ![Image][2-1-13-launchinstance]
 
+### 19.) 设置实例细节
 
-### 19.) Set instance details
-
-On Step 1, choose the *Amazon Linux AMI*. On the Instance Type, select *t2.micro*.
+在步骤1中，选择 *Amazon 系统映像*。选择 *t2.micro* 的实例类型。
 
 ![Image][2-1-14-ami]
 
+### 20.) 设置用户数据
 
-### 20.) Set User Data
+你可以将 *用户数据* 理解为EC2实例启动时运行的脚本。 我们可以使用用户数据来声明我们想要做什么 - 在这种情况下，我们声明了安装Wordpress时使用的命令，这样的好处是：你不用在登录后再次手动执行。
 
-You can think of *User Data* as scripts that you can run for your EC2 instance when it launches. We can use User Data to declare what we want to do - in this case, we're declaring the same commands that we used to install Wordpress the first time - except you don't have to login and do it manually anymore.
-
-On the *Advanced Details* tab of *Step 3: Configure Instance Details*, paste the following into the *User Data* box:
+在 *步骤3：配置实例详细信息* 的 *高级详细信息* 选项卡上，将以下内容粘贴到 *用户数据* 中：
 
 ```
 #!/bin/bash
@@ -211,14 +197,14 @@ chown -R apache /var/www/html/
 service httpd start
 ```
 
-Again, make sure that you change the S3 bucket name (`devopsgirls-training`, `devopsgirls-training-2`, or `devopsgirls-training-3`). Your configuration should look like this:
+再次检查是否需要更改S3存储桶的名称（`devopsgirls-training`，`devopsgirls-training-2` 或 `devopsgirls-training-3`）。
+你的配置应如下所示：
 
 ![Image][2-1-15-userdata]
 
+### 21.) 继续配置实例信息
 
-### 21.) Continue the instance configuration
-
-For the rest of the instance configuration, specify the following:
+对于实例配置的其余部分，请指定以下内容：
 
 ```
  - Storage: Defaults
@@ -229,53 +215,48 @@ For the rest of the instance configuration, specify the following:
 
 ![Image][2-1-16-tags]
 
+### 22.) 配置安全组
 
-### 22.) Change the security group configuration
+由于你的实例仅仅接受来自负载均衡器的流量，因此你可以将负载均衡器指定为来源。这意味着通过缩小可接收的流量类型来使你的实例更安全。
 
-Because your instance is only supposed to be accepting traffic from your Load Balancer, you can now specify your load balancer as a source. This means that you're making your instances more secure by narrowing down the kind of traffic it can receive.
-
-Additionally, you no longer need to specify SSH access - because all the configuration is done via your User Data. For your security group configuration, choose *Create a new security group* and specify the following:
+此外，你不再需要指定SSH访问，因为所有配置都是通过你的*用户数据*完成的。 对于安全组配置，选择 *创建新安全组* 并指定以下内容：
 
 ```
  -  Type: HTTP
  -  Source: your ELB
 ```
 
-It should look like this:
+它应该如下所示：
 
 ![Image][2-1-17-elbsg]
 
+### 23.) 启动实例并转到负载均衡器
 
-### 23.) Launch your instance and go to Load Balancers
-
-Click on *Launch instance* to launch your instance. Now, go back to the Load Balancer section ( *Services > EC2 > Load Balancers* ). Select the Load Balancer you created prior, then click on *Instances* on the lower pane.
+点击 *启动实例* 来启动你的实例。现在，返回负载均衡器的部分（ *服务 > EC2 > 负载均衡器* ）。 选择之前创建的负载均衡器，然后单击下方面板中的 *实例*。
 
 ![Image][2-1-18-instances]
 
+### 24.) 将新实例添加到负载均衡器
 
-### 24.) Add your new instance to the Load Balancer
-
-Click on *Edit Instances*,  then add the new instance you just created (myname-wordpress-2). Click on *Save*.
+点击 *编辑实例*，然后添加刚刚创建的新实例（myname-wordpress-2），点击 *保存* 。
 
 ![Image][2-1-19-addinstance]
 
+### 25.）检查一切是否完美运行
 
-### 25.) Check that everything is working perfectly
+跳转到负载均衡器的 *描述* 选项卡。 如果一切顺利，它应该提示“有2个实例正在服务，共有2个”。 你可以通过以下方式测试：
 
-Go to the *Description* tab of your load balancer. If everything worked well, it should say "*2 of 2 instances in service*". You can test this by:
+ - 在Wordpress窗口打开的情况下刷新浏览器
 
- - Refresh your browser with the Wordpress window open
+ - 在AWS控制台（服务> EC2）中，右键点击其中一个实例，然后选择 *停止实例* 。
 
- - In the AWS console (Services > EC2), right click on one of your instances and select *Stop Instance*.
+ - 如果一切正常，即使刷新浏览器，你的网站也会正常运行。
 
- - If everything worked well, then your site should still be up even if you refresh your browser.
-
-### 26.) And, done!
+### 26.) 圆满结束！
 
 ![Image][2-1-20-blog]
 
-
-Congratulations! You now have a more durable service configuration.
+恭喜！你现在有了更持久的服务配置。
 
 
 

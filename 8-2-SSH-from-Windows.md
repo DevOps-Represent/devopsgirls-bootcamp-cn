@@ -45,7 +45,7 @@
 
 ### 2.）设置你的登录信息
 
-在 *Category* 窗格中，选择 **Session** 并填写以下字段: 
+在 *Category* 窗格中，选择 **Session** 并填写以下字段:
 
 
 ```
@@ -54,7 +54,7 @@
  Connection type: SSH
 ```
 
-确保将 *[PUBLIC IP]* 替换为EC2实例的 *Public IP*。例如: 
+确保将 *[PUBLIC IP]* 替换为EC2实例的 *Public IP*。例如:
 
 ```
  Host: ec2-user@22.33.44.55

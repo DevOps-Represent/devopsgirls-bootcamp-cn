@@ -193,7 +193,7 @@ Subnet 的设置基本上决定了你的实例将在哪个AZ部署--可以把AZ�
 
 ### 24.）下载Cloudformation模板
 
-下载cloudformation模板[这里](https://raw.githubusercontent.com/DevOpsGirls/devopsgirls-bootcamp/master/devopsgirls-wordpress.yaml)。您可以使用文本编辑器（记事本或类似的东西）打开它。
+下载cloudformation模板[这里](devopsgirls-wordpress.yaml)。您可以使用文本编辑器（记事本或类似的东西）打开它。
 
 ### 25.）阅读模板
 

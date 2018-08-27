@@ -28,8 +28,7 @@ Parameters:
     ConstraintDescription: must begin with a letter and contain only alphanumeric
       characters.
   WordpressS3Bucket:
-    Default: devopsgirls-training
-    NoEcho: 'true'
+    Default: devopsgirls-training-xian
     Description: Bucket to get Wordpress from
     Type: String
 
@@ -42,8 +41,8 @@ Mappings:
     t2.medium:
       Arch: HVM64
   AWSRegionArch2AMI:
-    ap-southeast-2:
-      HVM64: ami-48d38c2b
+    ap-southeast-1:
+      HVM64: ami-01da99628f381e50a
 
 Resources:
   ElasticLoadBalancer:
@@ -115,43 +114,12 @@ Resources:
         PauseTime: PT30M
         WaitOnResourceSignals: 'true'
 
-  WebServerRole:
-    Type: AWS::IAM::Role
-    Properties:
-      Path: /
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - ec2.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      Policies:
-        - PolicyName: permit-s3-wordpress
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action: s3:GetObject
-                Resource: !Join ['', ['arn:aws:s3:::', !Ref 'WordpressS3Bucket', /*]]
-              - Effect: Allow
-                Action: s3:ListBucket
-                Resource: !Join ['', ['arn:aws:s3:::', !Ref 'WordpressS3Bucket']]
-
-  WebServerProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties:
-      Path: /
-      Roles:
-        - !Ref 'WebServerRole'
-
   LaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
       ImageId: !FindInMap [AWSRegionArch2AMI, !Ref 'AWS::Region', !FindInMap [AWSInstanceType2Arch,
           !Ref 'InstanceType', Arch]]
       InstanceType: !Ref 'InstanceType'
-      IamInstanceProfile: !Ref 'WebServerProfile'
       SecurityGroups:
         - !Ref 'WebServerSecurityGroup'
       UserData: !Base64
@@ -160,7 +128,7 @@ Resources:
           - - "#!/bin/bash -xe \n"
             - "yum update -y aws-cfn-bootstrap \n"
             - "aws configure set default.s3.multipart_threshold 64MB \n"
-            - aws s3 cp s3://devopsgirls-training/
+            - aws s3 cp s3://devopsgirls-training-xian/
             - !Ref 'DevopsGirlsUser'
             - "-wordpress.tgz /var/www/wordpress.tgz --no-sign-request \n"
             - "yum install httpd php php-mysql -y \n"

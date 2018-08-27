@@ -1,12 +1,12 @@
-# Launch Configurations 和 Auto Scaling Groups
+# 启动配置 和 Auto Scaling 组
 
 ## 关键概念
 
 在我们开始之前, 我们先看几个关键的概念
 
-  - *Launch Configurations 是你用来构建你的EC2实例的蓝图.* 也就是说你可以用你配置EC2实例的方式去配置它, 唯一不同的是, 在配置它的过程中, 你不会真正的创建一个EC2 实例, 你只是为它(们)画一个图纸
+  - *启动配置 是你用来构建你的EC2实例的模板.* 也就是说你可以用你配置EC2实例的方式去配置它, 唯一不同的是, 在配置它的过程中, 你不会真正的创建一个EC2 实例, 你只是为它(们)画一个图纸
 
-  - *Autoscaling Groups控制着你期望运行的实例的数量.* 它有很多种机制来实现对运行实例的控制:手动控制或者系统监测等. 它和Launch Configurations 组合使用来自动创建/销毁实例.
+  - *Autoscaling 组控制着你期望运行的实例的数量.* 它有很多种机制来实现对运行实例的控制:手动控制或者系统监测等. 它和`启动配置` 组合使用来自动创建/销毁实例.
 
 好啦, 我们可以开始啦.
 
@@ -14,112 +14,112 @@
 
 在这个实操课程中, 我们将会:
 
-  - 创建一个Launch Configurations
+  - 创建一个启动配置
 
-  - 和为EC2指定UserData类似的方式为Launch configuration指定UserData
+  - 用为EC2指定`用户数据`类似的方式为启动配置指定`用户数据`
 
-  - 创建一个Autoscaling Group
+  - 创建一个Autoscaling 组
 
-  - 配置Autoscaling Group, 使其创建的实例可以关联到ELB上
+  - 配置Autoscaling 组, 使其创建的实例可以关联到ELB上
 
   - 测试
 
 
-## 创建一个Launch Configuration
+## 创建一个启动配置
 
 
-### 1.) 创建你的Launch Configuration
+### 1.) 创建启动配置
 
-跳转到Services > EC2, 你能在左边栏看到 *Launch Configurations*. 点击 *Create Launch Configuration*
+跳转到服务 > EC2, 你能在左边菜单栏看到 *启动配置*. 点击 *创建启动配置*
 
-![Image][3-1-createlcfg]
+![Image](./images/3-1-ASG/3-1-1-createlcfg-zh.png)
 
+### 2.) 设置启动配置将要使用的实例大小和AMI
 
-### 2.) 设置Launch configuration 将要使用的实例的尺寸和AMI
-
-我们使用配置EC2实例的方式来配置Launch Configuration
+我们使用配置EC2实例的方式来配置启动配置
 ```
- - AMI: Amazon Linux AMI
+ - AMI: Amazon Linux 2 AMI
  - Instance Type: t2.micro
 ```
 
-![Image][3-1-2-instancetype]
+![Select your AMI](./images/1-1-EC2/1-1-4-ami-zh.png)
+![instancetype](./images/1-1-EC2/1-1-5-instancetype-zh.png)
 
+### 3.) 配置启动配置其他细节
 
-### 3.) 配置Launch Configuration其他细节
+我们将要设置启动配置的其他细节, 先给它命名*你名字拼音-DevOps-girls-launchconfig*.
 
-我们将要设置Launch Configuration的其他细节, 先给它命名*myname-launchconfig*.
+![Image](./images/3-1-ASG/3-1-3-iamrole-zh.png)
 
-![Image][3-1-3-iamrole]
-
-需要注意的是: 这个IAM role 只有你放置Wordpress的那个S3 bucket的只读权限.
+IAM角色直接选`无`
 
 ### 4.) 高级设置
 
-在同一个配置界面, 点击 *Advanced Details*, 将下列内容粘贴到 *User Data* 栏里面:
+在同一个配置界面, 点击 *高级详细信息*, 将下列内容粘贴到 *用户数据* 栏里面:
 
-```
+```bash
 #!/bin/bash
 yum install -y mysql php php-mysql httpd
-aws s3 cp s3://devopsgirls-training/firstname.lastname-wordpress.tgz /var/www/wordpress.tgz --no-sign-request
+aws s3 cp s3://devopsgirls-training-xian/你名字拼音-wordpress.tgz /var/www/wordpress.tgz --no-sign-request
 tar xvfz /var/www/wordpress.tgz -C /var/www/html/
 chown -R apache /var/www/html
 service httpd start
 ```
 
-**确保** 将 `firstname.lastname-wordpress.tgz` 改名为你自己的名字, 或者你自己命名的Wordpress包名. 同时给S3 bucket 命名.
+**确保** 将 `你名字拼音-wordpress.tgz` 改名为你自己的名字, 或者你自己命名的Wordpress包名.
 
-![Image][3-1-4-userdata]
+![Image](./images/3-1-ASG/3-1-4-userdata-zh.png)
 
 
 ### 5.) 禁用公网IP
 
-在同一个配置界面, 选择 *Do not assign public IP*. 这是一个非常重要的安全度量衡, 并且它将实例于公网分割开, 所有交互只能通过负载均衡.
+在同一个配置界面, 选择 *不向任何实例分配公有 IP 地址*. 这是一个非常重要的安全度量衡, 并且它将实例于公网分割开, 所有交互只能通过负载均衡.
 
 进入下一个页面
 
 ### 6.) 设置存储
 我们不需要修改存储配置, 所以我们把所有 *Add Storage* 中的配置保持默认
 
-![Image][3-1-5-storage]
+![Image](./images/3-1-ASG/3-1-5-storage-zh.png)
+
 
 ### 7.) Security Groups
 
-我们将做于之前配置EC2 实例一摸一样的事. 在 *Protocol* 中选择 *HTTP*, 然后设置 *Source* 为 *"Custom IP"*, 如果你输出你之前创建的负载均衡的名称, 它应该要出现在下拉列表里面
+我们将做和之前配置EC2实例一样的事. 在 *Protocol* 中选择 *HTTP*, 然后设置 *来源* 为 *"自定义 IP"*, 如果你输入你之前创建的负载均衡的名称, 它应该要出现在下拉列表里面
 
-![Image][3-1-6-secgroups]
+![Image](./images/3-1-ASG/3-1-6-secgroups-zh.png)
 
-非常好的是, 对于每一个我们创建的实例来说, 我们只接受来自 *我自己的负载均衡* 的http流量, 这是非常好的
+对于每一个我们创建的实例来说, 我们只接受来自 *我自己负载均衡器* 的http流量。
 
-### 8.) 检查你的配置, 选择SSH秘钥对
+### 8.) 检查你的配置, 选择SSH密钥对
 
-我们将在检查完配置以后完成Launch Configuration 的创建, 确认一切都OK 以后, 点击
-*Create Launch Configuration*
+我们将在检查完配置以后完成启动配置 的创建, 确认一切都OK 以后, 点击
+*创建启动配置*
 
-![Image][3-1-7-reviewlc]
+![Image](./images/3-1-ASG/3-1-7-reviewlc-zh.png)
 
-和创建EC2 实例一样, 在最后会让你选择一个你之前创建好的SSH秘钥对
+和创建EC2 实例一样, 在最后会让你选择一个你之前创建好的SSH密钥对
 
-## 创建一个AutoScaling Group
+## 创建一个AutoScaling 组
 
-### 9.) 为你的Launch Configuration创建一个Autoscaling Group
+### 9.) 为你的启动配置创建一个Autoscaling 组
 
-当你点击 *Create Launch Configuration* 以后, 你应该能看到另外一个按钮: *Create an Autoscaling Group using this Launch Configuration*. 点击它.
+当你点击 *创建启动配置* 以后, 你应该能看到另外一个按钮: *使用此启动配置创建 Auto Scaling 组*. 点击它.
 
-![Image][3-1-8-createsgh]
+![Image](./images/3-1-ASG/3-1-8-createsgh-zh.png)
 
 
-### 10.) Autoscaling Group 细节配置
-在下一个配置界面, 将GroupName 指定为 *myname-asg*, 设置Group Size为 *2*
-![Image][3-1-9-asgname]
-### 11.) 选择Network和Subnets
-在这次练习中, 我们将使用 *default* VPC, 点击 *Subnet* 输入框, 你应该选择2-3个Subnet
-![Image][3-1-10-subnets]
-Subnet 的设置基本上决定了你的实例将在哪个AZ部署--可以把AZ理解成数据中心, 数据中心将分布在一个region的不同地点, 你会需要很好的扩散性--这将在某个AZ挂掉的情况下为你的服务提供保障.
+### 10.) Autoscaling 组详细配置
+在下一个配置界面, 将GroupName 指定为 *你名字拼音-DevOps-Girls-asg*, 设置组大小为 *2*
+![Image](./images/3-1-ASG/3-1-9-asgname-zh.png)
+### 11.) 选择网络和子网
+在这次练习中, 我们将使用 *默认* VPC, 点击 *子网* 输入框, 你应该选择2-3个子网
+![Image](./images/3-1-ASG/3-1-10-subnets-zh.png)
+子网的设置基本上决定了你的实例将在哪个可用区部署--可以把可用区理解成数据中心, 数据中心将分布在一个区域的不同地点, 你会需要很好的扩散性--这将在某个可用区挂掉的情况下为你的服务提供保障.
 
 ### 12.) 设置 Load Balancer
 
-在同一个配置界面上点击 *Advanced Details*, 你能看到一个复选框 *Load Balancing*. 这个选项可以让你把新创建的实例附属到负载均衡上.
+在同一个配置界面上点击 *高级详细信息*, 你能看到一个复选框 *负载平衡*. 这个选项可以让你把新创建的实例附属到负载均衡上.
 ![Image][3-1-11-elb]
 一个额外的选择框应该会出现在页面上: *Classic Load Balancers*, 你应该可以选择你之前创建的负载均衡了.
 

@@ -4,7 +4,7 @@
 
 ![DevOps Girls](/images/devopsgirls.jpg)
 
-这个代码库中有 DevOpsGirls Bootcamp 模块的幻灯片和内容。
+这个代码库中有DevOpsGirls训练营相关培训材料。
 
 ## 实践
 
@@ -22,6 +22,6 @@ DevOpsGirls Bootcamp 主要由三个模块组成，还有一些额外的模块�
 
 加油~
 
-## 我想为DevOps Girls做贡献。我该怎么帮忙？
+## 我想为DevOps Girls做贡献，我该怎么帮忙？
 
-任何人都可以免费使用这些模块 - 如果你想创建自己的模块并将其添加到存储库，请随时查看我们的[贡献指南](CONTRIBUTING.md)
+任何人都可以免费使用这些模块 - 如果你想创建自己的模块并将其添加到GitHub，请随时查看我们的[贡献指南](CONTRIBUTING.md)
